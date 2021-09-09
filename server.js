@@ -16,26 +16,27 @@ app.get("/notes", (req, res) =>
 );
 
 app.get("/api/notes", (req, res) =>
-  fs.readFile(path.join(__dirname, "/db/db.json"), "utf8", (err, data) => {
+  fs.readFile("./db/db.json", "utf8", (err, data) => {
+    console.log("NOTES:", data);
     if (err) {
       return res.status(500).json(err);
     }
-    res.status(200).json(data);
+    res.json(JSON.parse(data));
   })
 );
 
 app.post("/api/notes", (req, res) => {
-  fs.readFile(path.join(__dirname, "/db/db.json"), "utf8", (err, data) => {
+  fs.readFile("./db/db.json", "utf8", (err, data) => {
     if (err) {
       return res.status(500).json(err);
     }
-    res.status(200).json.parse(data);
+    res.json(JSON.parse(data));
   });
-  fs.writeFile(path.join(__dirname, "/db/db.json"), "utf8", (err, data) => {
+  fs.writeFile("./db/db.json", "utf8", (err, data) => {
     if (err) {
       return res.status(500).json(err);
     }
-    res.status(200).json.stringify(data);
+    res.json(JSON.stringify(data));
   });
 });
 
