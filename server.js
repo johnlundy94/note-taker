@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const express = require("express");
+const { nanoid } = require("nanoid");
 
 const PORT = process.env.PORT || 3001;
 
@@ -30,17 +31,38 @@ app.post("/api/notes", (req, res) => {
     if (err) {
       return res.status(500).json(err);
     }
-    res.json(JSON.parse(data));
-  });
-  fs.writeFile("./db/db.json", "utf8", (err, data) => {
-    if (err) {
-      return res.status(500).json(err);
-    }
-    res.json(JSON.stringify(data));
+
+    const oldNotes = JSON.parse(data);
+    const newNote = req.body;
+    newNote.id = nanoid();
+    const updatedNotes = [newNote, ...oldNotes];
+
+    fs.writeFile("./db/db.json", JSON.stringify(updatedNotes), (err) => {
+      if (err) return res.status(500).json(err);
+      res.json(updatedNotes);
+    });
   });
 });
 
-// app.delete("/api/notes/:id", (req, res) => res.send(""));
+app.delete("/api/notes/:id", (req, res) => {
+  fs.readFile("./db/db.json", "utf8", (err, data) => {
+    if (err) {
+      return res.status(500).json(err);
+    }
+
+    const oldNotes = JSON.parse(data);
+    const filterNotes = oldNotes.filter((note) => {
+      if (note.id === req.params.id) {
+        return false;
+      }
+      return true;
+    });
+    fs.writeFile("./db/db.json", JSON.stringify(filterNotes), (err) => {
+      if (err) return res.status(500).json(err);
+      res.json(filterNotes);
+    });
+  });
+});
 
 // GET Route for index.html
 app.get("*", (req, res) =>
