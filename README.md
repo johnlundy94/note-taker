@@ -11,5 +11,5 @@
 
 ## Link to GitHub and Heroku
 
-GitHub:
+GitHub: https://github.com/johnlundy94/note-taker
 Heroku: https://q-note-taker.herokuapp.com/
